@@ -66,7 +66,7 @@ struct usuario* crear_Usuario(struct usuario *primero,struct usuario *ultimo, st
 struct usuario* insertarNodoUsuarios(struct usuario *primero,struct usuario *ultimo,int id,char nombre[10],int grupo);
 struct usuario* buscarUltimoU(struct usuario *primero);
 void desplegarListaU(struct usuario *primero);
-struct usuario* eliminarNodoU(struct usuario *primero, int etiq);
+struct usuario* eliminarNodoU(struct usuario *primero, int etiq, struct proceso *primeroP);
 
 struct proceso* crear_Proceso(struct proceso *primero,struct proceso *ultimo,struct region *primeroR, struct region *ultimoR,struct usuario *primeroU);
 struct proceso* insertarNodoP(struct proceso *primero,struct proceso *ultimo,int id,int idUsuario,int grupo,int tiempo,char c[10],int num,
@@ -84,6 +84,9 @@ struct region* eliminarNodoR(struct region *primero, int etiq);
 int estaNodoG(struct grupo *primero, int etiq);
 int estaNodoU(struct usuario *primero, int etiq);
 int estaNodoP(struct proceso *primero, int etiq);
+
+struct proceso* eliminarNodoP2(struct proceso *primero, int etiq);
+int estaNodoP2(struct proceso *primero, int etiq);
 
 int main(){
 	nodo *primero = NULL,*ultimo = NULL;
@@ -145,7 +148,7 @@ int main(){
 		break;
 	case 10:
 		primeroU=crear_Usuario(primeroU,ultimoU,primeroG);
-		if(ultimoU!=NULL){
+		if(primeroU!=NULL){
 			ultimoU=buscarUltimoU(primeroU);
 		}
 		
@@ -157,7 +160,10 @@ int main(){
 	case 12:
 		printf("Nodo a eliminar : \n");
 	    	scanf("%d",&etiq);
-		primeroU=eliminarNodoU(primeroU, etiq);
+		primeroU=eliminarNodoU(primeroU, etiq,primeroP);
+		if(primeroU!=NULL){
+			ultimoU=buscarUltimoU(primeroU);
+		}
 		break;
 	case 13:
 		primeroP=crear_Proceso(primeroP,ultimoP,primeroR,ultimoR,primeroU);
@@ -172,6 +178,9 @@ int main(){
 		printf("Nodo a eliminar : \n");
 	    	scanf("%d",&etiq);
 		primeroP=eliminarNodoP(primeroP, etiq);
+		if(primeroP!=NULL){
+		ultimoP=buscarUltimoP(primeroP);
+		}
 		break;
 		
 	case 20:
@@ -215,7 +224,7 @@ struct proceso* crear_Proceso(struct proceso *primero,struct proceso *ultimo,str
 		printf("igresa el id de usuario\n");
 		scanf("%d",&idUsuario);
 		if(a=estaNodoU(primeroU, idUsuario)==1){
-			printf("esta");
+			//printf("esta");
 			//primero=insertarNodoUsuarios(primero,ultimo,id,nombre,grupo);
 			do{
 			printf("ingresa el tiempo de ejecucion\n");
@@ -303,11 +312,16 @@ int estaNodoP(struct proceso *primero, int etiq){
 struct proceso* buscarUltimoP(struct proceso *primero){
 	proceso* actual=primero->siguiente;
 	proceso* anterior=primero;
+		if(primero!=NULL){
 		do{
 			actual=actual->siguiente;
 			anterior=anterior->siguiente;
 		}while(actual!=primero);
 		return anterior;
+		}else{
+			printf("null");
+		}
+		return NULL;
 }
 void desplegarListaP(struct proceso *primero){
 	proceso* actual = NULL;
@@ -766,17 +780,110 @@ void desplegarListaU(struct usuario *primero){
 		printf("\n La lista se encuentra vacia \n\n");
 	}
 }
-struct usuario* eliminarNodoU(struct usuario *primero, int etiq){
+
+int estaNodoP2(struct proceso *primero, int etiq){
+	proceso* actual = NULL;
+	proceso* anterior = NULL;
+	proceso* ultimo = NULL;
+	//int f;
+	ultimo=buscarUltimoP(primero);
+	actual=primero;
+	anterior=ultimo;
+	//printf("Nodo a eliminar : \n");
+	//scanf("%d",&f);
+	
+	if(actual != NULL){
+		do{
+			
+			if(actual->idUsuario==etiq){
+				return 1;	
+			}
+			anterior=actual;
+			actual=actual->siguiente;
+			
+		}while(actual!= primero);
+	}else{
+		printf("\n La lista se encuentra vacia \n\n");
+	
+	}
+
+	//desplegarLista(actual);
+	return 0;
+}
+struct proceso* eliminarNodoP2(struct proceso *primero, int etiq){
+	proceso* actual = NULL;
+	proceso* anterior = NULL;
+	proceso* ultimo = NULL;
+	//int f;
+	
+	if(primero!=NULL){
+	
+	ultimo=buscarUltimoP(primero);
+	}
+	actual=primero;
+	anterior=ultimo;
+	//printf("Nodo a eliminar : \n");
+	//scanf("%d",&f);
+	
+	if(actual != NULL){
+		do{
+			
+			if(actual->idUsuario==etiq){
+				if(actual==primero&&actual==ultimo){	
+				printf("Nodo eliminado %d asd\n",actual->id);		
+				free(actual);
+				//actual=actual;
+				//actual->siguiente=actual;
+				//actual=NULL;
+				
+				//return actual;
+				}else if(actual==primero){
+					printf("Nodo eliminado %d\n",actual->id);
+					anterior=primero;
+					primero = primero->siguiente;
+					free(anterior);	
+					ultimo->siguiente=primero;
+				}else if(actual== ultimo){
+					printf("Nodo eliminado %d\n",actual->id);
+					free(actual);
+					
+					anterior->siguiente=ultimo->siguiente;
+					ultimo=anterior;
+				}else{	
+					printf("Nodo eliminado %d\n",actual->id);
+					anterior->siguiente = actual->siguiente;
+					free(actual);
+					
+				}
+			}
+			anterior=actual;
+			actual=actual->siguiente;
+			
+		}while(actual!= primero);
+	}else{
+		printf("\n La lista se encuentra vacia \n\n");
+	}
+
+	//desplegarLista(actual);
+	return primero;
+}
+struct usuario* eliminarNodoU(struct usuario *primero, int etiq,struct proceso *primeroP){
 	usuario* actual = NULL;
 	usuario* anterior = NULL;
 	usuario* ultimo = NULL;
 	//int f;
+	int a;
 	ultimo=buscarUltimoU(primero);
 	actual=primero;
 	anterior=ultimo;
 	//printf("Nodo a eliminar : \n");
 	//scanf("%d",&f);
 	
+		while(((a=estaNodoP2(primeroP,etiq))==1)&&(primeroP!=NULL)){
+		
+		primeroP=eliminarNodoP2(primeroP, etiq);
+		printf("está");
+		}
 	if(actual != NULL){
 		do{
 			
