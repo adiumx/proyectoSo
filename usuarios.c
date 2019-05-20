@@ -212,22 +212,22 @@ struct proceso* crear_Proceso(struct proceso *primero,struct proceso *ultimo,str
 	if(primeroU!=NULL){
 		while(flecha==0){
 		desplegarListaU(primeroU);
-		printf("igresa el id de usuario");
+		printf("igresa el id de usuario\n");
 		scanf("%d",&idUsuario);
 		if(a=estaNodoU(primeroU, idUsuario)==1){
 			printf("esta");
 			//primero=insertarNodoUsuarios(primero,ultimo,id,nombre,grupo);
 			do{
-			printf("ingresa el tiempo de ejecucion");
+			printf("ingresa el tiempo de ejecucion\n");
 			scanf("%d",&t);
-			printf("tiempo %d",t);
+			//printf("tiempo %d",t);
 			}while(t<0);
-			printf("tiene regiones criticas? y/n");
+			printf("tiene regiones criticas? y/n\n");
 			scanf(" %s",&c);
 			if(ret = strncmp(c, c2, 1)==0){
-			printf("cuantas?");
+			printf("cuantas?\n");
 			scanf("%d",&num);
-			printf("tiempo %d",t);
+			//printf("tiempo %d",t);
 			primeroR=regionCritica(primeroR,ultimoR,id,num,t);
 			}
 	primero=insertarNodoP(primero,ultimo,id,idUsuario,grupo,t,c,num,primeroR);
@@ -239,7 +239,7 @@ struct proceso* crear_Proceso(struct proceso *primero,struct proceso *ultimo,str
 	}
 	}
 	if(primeroU==NULL){
-		perror("no se ha creado el usuario ");
+		perror("no se ha creado el usuario \n");
 	}	
 	
 	//fflush(stdin);
@@ -314,7 +314,7 @@ void desplegarListaP(struct proceso *primero){
 	actual = primero;
 	if(primero != NULL){
 		do{
-			printf("id proceso %d usuario %d grupo %d regiones y/n:%c numero de regiones:%d ", 
+			printf("id proceso %d usuario %d grupo %d regiones y/n:%s numero de regiones:%d ", 
 			actual->id, actual->idUsuario,actual->grupo,actual->c,actual->num);
 			desplegarListaR(actual->regiones);
 			actual = actual->siguiente;
@@ -381,19 +381,45 @@ struct proceso* eliminarNodoP(struct proceso *primero, int etiq){
 struct region* regionCritica(struct region *primero,struct region *ultimo,int id,int num,int tiempo){
 	int n1,n2 ,duracion;
 	do{
-		printf("tiempo %d",tiempo);
-	printf("ingresa el tiempo en que inicia n region critica");
-	scanf("%d",&n1);
-	do{
-	printf("duracion de la region critica");
-	scanf("%d",&duracion);
-	n2=n1+duracion;
-	printf("%d %d",n2,tiempo);
-	}while(n2>tiempo);
-	
-	primero=insertarNodoRegion(primero,ultimo,n1,n2,duracion);
-	ultimo=buscarUltimoR(primero);
-	num--;
+		if(primero!=NULL){
+			do{
+				do{
+				//printf("tiempo %d",tiempo);
+				printf("ingresa el tiempo en que inicia %d region critica\n",num);
+				scanf("%d",&n1);
+				}while(n1<0||n1>=tiempo);
+				do{
+				if(ultimo!=NULL){
+					ultimo=buscarUltimoR(primero);
+				}
+				//if(ultimo->tiempo<n2)
+				printf("duracion de la region critica\n");
+				scanf("%d",&duracion);
+				n2=n1+duracion;
+				//printf("%d %d",n2,tiempo);
+				}while(n2>tiempo||duracion<=0);
+			}while((n1>=ultimo->n1&&n1<ultimo->n2)||(n2>ultimo->n1&&n2<=ultimo->n2));
+			
+		}else{
+			do{
+				//printf("tiempo %d",tiempo);
+				printf("ingresa el tiempo en que inicia %d region critica\n",num);
+				scanf("%d",&n1);
+				}while(n1<0||n1>=tiempo);
+				do{
+				if(ultimo!=NULL){
+					ultimo=buscarUltimoR(primero);
+				}
+				//if(ultimo->tiempo<n2)
+				printf("duracion de la region critica\n");
+				scanf("%d",&duracion);
+				n2=n1+duracion;
+				printf("%d %d",n2,tiempo);
+				}while(n2>tiempo||duracion<=0);
+			}
+			primero=insertarNodoRegion(primero,ultimo,n1,n2,duracion);
+			ultimo=buscarUltimoR(primero);
+			num--;
 	}while(num>0);
 	return primero;
 }
@@ -430,12 +456,13 @@ void desplegarListaR(struct region *primero){
 	actual = primero;
 	if(primero != NULL){
 		do{
-			printf("inicia %d acaba %d duracion %d\n", actual->n1, actual->n2,actual-> duracion);
+			printf("inicia %d acaba %d duracion %d", actual->n1, actual->n2,actual-> duracion);
 			actual = actual->siguiente;
 		}while(actual!=primero);
 	}else{
 		printf("\n La lista se encuentra vacia \n\n");
 	}
+	printf("\n");
 }
 struct region* eliminarNodoR(struct region *primero, int etiq){
 	region* actual = NULL;
@@ -497,7 +524,7 @@ struct grupo* crear_Grupo(struct grupo *primero,struct grupo *ultimo){
 	scanf("%d",&id);
 	if(primero!=NULL){
 		if(a=estaNodoG(primero, id)==1){
-			perror("está repetido");
+			perror("está repetido\n");
 			return primero;
 		}
 		
@@ -634,17 +661,17 @@ struct usuario* crear_Usuario(struct usuario *primero,struct usuario *ultimo,str
 	int id,grupo,a,flecha=0;
 	char nombre[10];
 	usuario* nuevo = (usuario*) malloc(sizeof(usuario));
-	printf("ingresa el id");
+	printf("ingresa el id\n");
 	scanf("%d",&id);
 	if(primero!=NULL){
 		if(a=estaNodoU(primero, id)==1){
-			perror("está repetido");
+			perror("está repetido\n");
 			return primero;
 		}
 		
 	}
 	
-	printf("ingresa el nombre");
+	printf("ingresa el nombre\n");
 	scanf("%s",&nombre);
 	
 	
@@ -652,10 +679,10 @@ struct usuario* crear_Usuario(struct usuario *primero,struct usuario *ultimo,str
 	if(primeroG!=NULL){
 		while(flecha==0){
 		desplegarListaG(primeroG);
-		printf("ingresa el grupo");
+		printf("ingresa el grupo\n");
 		scanf("%d",&grupo);
 		if(a=estaNodoG(primeroG, grupo)==1){
-			printf("esta");
+			//printf("esta");
 			primero=insertarNodoUsuarios(primero,ultimo,id,nombre,grupo);
 			return primero;
 		}else{
@@ -664,7 +691,7 @@ struct usuario* crear_Usuario(struct usuario *primero,struct usuario *ultimo,str
 	}
 	}
 	if(primeroG==NULL){
-		perror("no se ha creado grupo ");
+		perror("no se ha creado grupo \n");
 	}	
 	//if(no grupo )marca error
 	
